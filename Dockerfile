@@ -22,7 +22,7 @@ RUN service postgresql start && sudo -u postgres -i psql -d postgres -c "CREATE 
 RUN cp /etc/redis/redis.conf /etc/redis/redis.conf.bak && sed 's/^port .*/port 0/' /etc/redis/redis.conf.bak | sed 's/# unixsocket/unixsocket/' | sed 's/unixsocketperm 700/unixsocketperm 777/' | tee /etc/redis/redis.conf
 
 #Clone gitlab
-RUN cd /home/git && sudo -u git -H git clone https://gitlab.com/gitlab-org/gitlab-ce.git -b 8-8-stable gitlab
+RUN cd /home/git && sudo -u git -H git clone https://gitlab.com/gitlab-org/gitlab-ce.git -b 8-9-stable gitlab
 
 #Configure gitlab
 RUN sudo -u git -H cp /home/git/gitlab/config/gitlab.yml.example /home/git/gitlab/config/gitlab.yml && sudo -u git -H cat /home/git/gitlab/config/gitlab.yml.example | sed 's/port: 80 /port: 8080 /' | tee /home/git/gitlab/config/gitlab.yml && sudo -u git -H cp /home/git/gitlab/config/secrets.yml.example /home/git/gitlab/config/secrets.yml && sudo -u git -H cp /home/git/gitlab/config/unicorn.rb.example /home/git/gitlab/config/unicorn.rb && sudo -u git -H cp /home/git/gitlab/config/initializers/rack_attack.rb.example /home/git/gitlab/config/initializers/rack_attack.rb && sudo -u git -H cat /home/git/gitlab/config/resque.yml.example > /home/git/gitlab/config/resque.yml && sudo -u git -H cat /home/git/gitlab/config/database.yml.postgresql | head -n 8 | sed 's/pool: 10/pool: 10\n  template: template0/' | sudo -u git -H tee /home/git/gitlab/config/database.yml && chmod o-rwx /home/git/gitlab/config/database.yml
